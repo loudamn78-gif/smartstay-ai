@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
+import joblib
 
 st.set_page_config(page_title="SmartStay", layout="wide")
 st.title("SmartStay | تحليل أسعار الإقامة")
@@ -11,6 +12,17 @@ st.title("SmartStay | تحليل أسعار الإقامة")
 def load_data():
     path = Path(__file__).resolve().parent / "data" / "clean.csv"
     return pd.read_csv(path)
+@st.cache_resource
+def load_model():
+    model_path = Path(__file__).resolve().parent / "Smartstay_model.pkl"
+    return joblib.load(model_path)
+
+try:
+    model = load_model()
+    st.success("تم تحميل نموذج التنبؤ بنجاح")
+except Exception as e:
+    st.error(f"تعذر تحميل نموذج التنبؤ: {e}")
+    st.stop()
 
 
 try:
