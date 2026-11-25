@@ -83,3 +83,91 @@ else:
         x_label="الحي",
         y_label="السعر بالدولار",
     )
+    st.divider()
+
+st.header("SmartStay Price Predictor")
+st.write("أدخلي مواصفات العقار للحصول على سعر الليلة المتوقع.")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    neighbourhood_group = st.selectbox(
+        "المنطقة",
+        sorted(data["neighbourhood_group"].dropna().unique())
+    )
+
+    neighbourhood_options = sorted(
+        data.loc[
+            data["neighbourhood_group"] == neighbourhood_group,
+            "neighbourhood"
+        ].dropna().unique()
+    )
+
+    neighbourhood = st.selectbox(
+        "الحي",
+        neighbourhood_options
+    )
+
+    room_type = st.selectbox(
+        "نوع السكن",
+        ["Entire home/apt", "Private room", "Shared room"]
+    )
+
+    stay_type = st.selectbox(
+        "نوع الإقامة",
+        ["short (1-6)", "weekly (7-29)", "monthly+ (30+)"]
+    )
+
+with col2:
+    number_of_reviews = st.number_input(
+        "عدد التقييمات",
+        min_value=0,
+        max_value=629,
+        value=5
+    )
+
+    calculated_host_listings_count = st.number_input(
+        "عدد إعلانات المضيف",
+        min_value=1,
+        max_value=327,
+        value=1
+    )
+
+    availability_365 = st.slider(
+        "التوفر خلال السنة",
+        min_value=0,
+        max_value=365,
+        value=44
+    )
+
+    distance_to_midtown_km = st.number_input(
+        "المسافة إلى وسط مانهاتن (كم)",
+        min_value=0.07,
+        max_value=35.9,
+        value=6.41,
+        step=0.1
+    )
+
+if st.button("توقع سعر الليلة"):
+    input_data = pd.DataFrame([{
+        "neighbourhood_group": neighbourhood_group,
+        "neighbourhood": neighbourhood,
+        "room_type": room_type,
+        "number_of_reviews": number_of_reviews,
+        "calculated_host_listings_count": calculated_host_listings_count,
+        "availability_365": availability_365,
+        "distance_to_midtown_km": distance_to_midtown_km,
+        "stay_type": stay_type
+    }])
+
+    predicted_price = model.predict(input_data)[0]
+
+    st.metric(
+        "السعر المتوقع لليلة",
+        f"${predicted_price:,.2f}"
+    )
+
+    st.caption(
+        "هذا تقدير إرشادي مبني على بيانات التدريب، "
+        "وليس سعرًا مضمونًا أو توصية تسعير نهائية."
+    )
