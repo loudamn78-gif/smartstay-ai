@@ -15,6 +15,7 @@ def load_data():
 @st.cache_resource
 def load_model():
     model_path = Path(__file__).resolve().parent / "smartstay_model.pkl"
+    return joblib.load(model_path)
 
 try:
     model = load_model()
