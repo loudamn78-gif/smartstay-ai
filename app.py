@@ -14,8 +14,7 @@ def load_data():
     return pd.read_csv(path)
 @st.cache_resource
 def load_model():
-    model_path = Path(__file__).resolve().parent / "Smartstay_model.pkl"
-    return joblib.load(model_path)
+    model_path = Path(__file__).resolve().parent / "smartstay_model.pkl"
 
 try:
     model = load_model()
