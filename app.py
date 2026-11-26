@@ -7,22 +7,39 @@ import joblib
 st.set_page_config(page_title="SmartStay", layout="wide")
 st.title("SmartStay | تحليل أسعار الإقامة")
 
-
 @st.cache_data
 def load_data():
     path = Path(__file__).resolve().parent / "data" / "clean.csv"
     return pd.read_csv(path)
+
+
 @st.cache_resource
 def load_model():
     model_path = Path(__file__).resolve().parent / "smartstay_model.pkl"
     return joblib.load(model_path)
+
+
 @st.cache_data
 def load_comparison_data():
     path = Path(__file__).resolve().parent / "data" / "clean.csv"
     return pd.read_csv(path)
-    
- def find_similar_listings(df, room_type, neighbourhood_group, neighbourhood):
+
+
+def find_similar_listings(df, room_type, neighbourhood_group, neighbourhood):
     similar = df[
+        (df["room_type"] == room_type)
+        & (df["neighbourhood_group"] == neighbourhood_group)
+    ].copy()
+
+    if neighbourhood:
+        same_neighbourhood = similar[
+            similar["neighbourhood"] == neighbourhood
+        ]
+
+        if len(same_neighbourhood) >= 5:
+            similar = same_neighbourhood
+
+    return similar
         (df["room_type"] == room_type)
         & (df["neighbourhood_group"] == neighbourhood_group)
     ].copy()
