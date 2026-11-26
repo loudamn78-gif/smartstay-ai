@@ -16,6 +16,41 @@ def load_data():
 def load_model():
     model_path = Path(__file__).resolve().parent / "smartstay_model.pkl"
     return joblib.load(model_path)
+ @st.cache_data
+def load_comparison_data():
+    path = Path(__file__).resolve().parent / "data" / "clean.csv"
+    return pd.read_csv(path)
+    
+    def find_similar_listings(df, room_type, neighbourhood_group, neighbourhood):
+    similar = df[
+        (df["room_type"] == room_type)
+        & (df["neighbourhood_group"] == neighbourhood_group)
+    ].copy()
+
+    if neighbourhood:
+        same_neighbourhood = similar[
+            similar["neighbourhood"] == neighbourhood
+        ]
+
+        if len(same_neighbourhood) >= 5:
+            similar = same_neighbourhood
+            def calculate_market_price(similar):
+    if similar.empty:
+        return None
+
+    prices = similar["price"].dropna()
+
+    if prices.empty:
+        return None
+
+    return {
+        "count": len(prices),
+        "median": prices.median(),
+        "low": prices.quantile(0.25),
+        "high": prices.quantile(0.75)
+    }
+
+    return similar
 
 try:
     model = load_model()
@@ -83,6 +118,39 @@ else:
         x_label="الحي",
         y_label="السعر بالدولار",
     )
+    similar_listings = find_similar_listings(
+        comparison_data,
+        room_type,
+        neighbourhood_group,
+        neighbourhood
+    )
+
+    market = calculate_market_price(similar_listings)
+
+    st.subheader("مقارنة العقارات المشابهة")
+
+    if market is None:
+        st.info("لم نعثر على عقارات مشابهة.")
+    else:
+        st.write(f"عدد العقارات المشابهة: {market['count']:,}")
+
+        m1, m2, m3 = st.columns(3)
+        m1.metric("وسيط سعر السوق", f"${market['median']:,.0f}")
+        m2.metric("الربع الأول", f"${market['low']:,.0f}")
+        m3.metric("الربع الثالث", f"${market['high']:,.0f}")
+
+        st.caption(
+            "تعتمد المقارنة على نوع السكن والمنطقة، "
+            "مع تفضيل الحي نفسه عند توفر 5 إعلانات على الأقل."
+        )
+
+        st.dataframe(
+            similar_listings[
+                ["neighbourhood", "room_type", "price",
+                 "minimum_nights", "number_of_reviews"]
+            ].sort_values("price").head(10),
+            use_container_width=True
+        )
     st.divider()
 
 st.header("SmartStay Price Predictor")
@@ -171,3 +239,38 @@ if st.button("توقع سعر الليلة"):
         "هذا تقدير إرشادي مبني على بيانات التدريب، "
         "وليس سعرًا مضمونًا أو توصية تسعير نهائية."
     )
+
+    similar_listings = find_similar_listings(
+        comparison_data,
+        room_type,
+        neighbourhood_group,
+        neighbourhood
+    )
+
+    market = calculate_market_price(similar_listings)
+
+    st.subheader("مقارنة العقارات المشابهة")
+
+    if market is None:
+        st.info("لم نعثر على عقارات مشابهة.")
+    else:
+        st.write(f"عدد العقارات المشابهة: {market['count']:,}")
+
+        m1, m2, m3 = st.columns(3)
+
+        m1.metric("وسيط سعر السوق", f"${market['median']:,.0f}")
+        m2.metric("الربع الأول", f"${market['low']:,.0f}")
+        m3.metric("الربع الثالث", f"${market['high']:,.0f}")
+
+        st.dataframe(
+            similar_listings[
+                [
+                    "neighbourhood",
+                    "room_type",
+                    "price",
+                    "minimum_nights",
+                    "number_of_reviews"
+                ]
+            ].sort_values("price").head(10),
+            use_container_width=True
+        )
