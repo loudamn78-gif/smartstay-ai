@@ -21,7 +21,7 @@ def load_comparison_data():
     path = Path(__file__).resolve().parent / "data" / "clean.csv"
     return pd.read_csv(path)
     
-    def find_similar_listings(df, room_type, neighbourhood_group, neighbourhood):
+ def find_similar_listings(df, room_type, neighbourhood_group, neighbourhood):
     similar = df[
         (df["room_type"] == room_type)
         & (df["neighbourhood_group"] == neighbourhood_group)
