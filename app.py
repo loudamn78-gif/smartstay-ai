@@ -34,7 +34,7 @@ def load_comparison_data():
 
         if len(same_neighbourhood) >= 5:
             similar = same_neighbourhood
-            def calculate_market_price(similar):
+def calculate_market_price(similar):
     if similar.empty:
         return None
 
