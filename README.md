@@ -13,6 +13,11 @@ SmartStay AI
 ## رابط الداتا
 New York City Airbnb Open Data (AB_NYC_2019.csv): https://www.kaggle.com/datasets/dgomonov/new-york-city-airbnb-open-data
 
+## رابط التطبيق:https://smartstay-ai-nsgxqvvtk6msfmctwkzjen.streamlit.app/
+
+##رابط المستودع: GitHub:
+
+GitHub – loudamn78-gif⁠￼
 ## أرقام أولية من الاستكشاف
 - وسيط سعر الليلة 106 دولار، والمتوسط 152.7 دولار.
 - حسب المنطقة (الوسيط): Manhattan 150، Brooklyn 90، Queens وStaten Island 75، Bronx 65.
