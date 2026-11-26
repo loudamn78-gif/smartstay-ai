@@ -40,17 +40,7 @@ def find_similar_listings(df, room_type, neighbourhood_group, neighbourhood):
             similar = same_neighbourhood
 
     return similar
-        (df["room_type"] == room_type)
-        & (df["neighbourhood_group"] == neighbourhood_group)
-    ].copy()
-
-    if neighbourhood:
-        same_neighbourhood = similar[
-            similar["neighbourhood"] == neighbourhood
-        ]
-
-        if len(same_neighbourhood) >= 5:
-            similar = same_neighbourhood
+        
 def calculate_market_price(similar):
     if similar.empty:
         return None
