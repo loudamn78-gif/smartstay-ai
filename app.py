@@ -16,7 +16,7 @@ def load_data():
 def load_model():
     model_path = Path(__file__).resolve().parent / "smartstay_model.pkl"
     return joblib.load(model_path)
- @st.cache_data
+@st.cache_data
 def load_comparison_data():
     path = Path(__file__).resolve().parent / "data" / "clean.csv"
     return pd.read_csv(path)
